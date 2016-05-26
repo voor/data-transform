@@ -199,6 +199,8 @@ public class DataTransformApplication implements CommandLineRunner {
             headers.add("war");
             headers.add("western");
 
+            writer.writeNext(StringUtils.toStringArray(headers));
+
             for (RatingEntity rating : ratingRepository.findAll()) {
                 List<Object> entry = new LinkedList<>();
                 entry.add(rating.getRating());
