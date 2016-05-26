@@ -1,5 +1,6 @@
 package com.planetvoor;
 
+import com.opencsv.CSVWriter;
 import com.planetvoor.domain.MovieEntity;
 import com.planetvoor.domain.RatingEntity;
 import com.planetvoor.domain.UserEntity;
@@ -16,13 +17,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.util.StringUtils;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
 @EnableJpaRepositories
@@ -43,6 +48,9 @@ public class DataTransformApplication implements CommandLineRunner {
     @Value("${files.user.path}")
     private Resource user;
 
+    @Value("${files.output.path}")
+    private Resource output;
+
     public static void main(String[] args) {
         SpringApplication.run(DataTransformApplication.class, args);
     }
@@ -50,6 +58,10 @@ public class DataTransformApplication implements CommandLineRunner {
     @Override
     public void run(String... params) throws Exception {
         List<String> options = Arrays.asList(params);
+
+        if (options.contains("all")) {
+            doAll();
+        }
 
         if (options.contains("data")) {
             readDataIn();
@@ -136,31 +148,115 @@ public class DataTransformApplication implements CommandLineRunner {
 
     public void readDataIn() {
 
-            try {
+        try {
 
-                CSVLooper.builder().file(data.getFile()).separator('\t').line(x -> {
+            CSVLooper.builder().file(data.getFile()).separator('\t').line(x -> {
 
-                    RatingEntity ratingEntity = RatingEntity.builder()
-                            .userId(Long.valueOf(x[0]))
-                            .movieId(Long.valueOf(x[1]))
-                            .rating(Long.valueOf(x[2]))
-                            .time(new Date(Long.valueOf(x[3])))
-                            .build();
+                RatingEntity ratingEntity = RatingEntity.builder()
+                        .userId(Long.valueOf(x[0]))
+                        .movieId(Long.valueOf(x[1]))
+                        .rating(Long.valueOf(x[2]))
+                        .time(new Date(Long.valueOf(x[3])))
+                        .build();
 
-                    ratingRepository.save(ratingEntity);
+                ratingRepository.save(ratingEntity);
 
-                }).build().loop();
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
+            }).build().loop();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
 
     }
+
+    public void writeData() throws IOException {
+
+        if (output.getFile().exists()) {
+            throw new RuntimeException("File already exists, please remove it or rename it.");
+        }
+        log.info("Writing out results to {}", output.getFile().getAbsolutePath());
+        if (!output.getFile().getParentFile().canWrite()) {
+            throw new RuntimeException("Can not write to provided location.");
+        }
+        try (CSVWriter writer = new CSVWriter(new FileWriter("movie-data.csv"), ',')) {
+
+            List<String> headers = new LinkedList<>();
+            headers.add("RATING");
+            headers.add("USER_AGE");
+            headers.add("USER_MALE");
+            headers.add("USER_JOB");
+            headers.add("USER_ZIP");
+            headers.add("MOVIE_NAME");
+            headers.add("unknown");
+            headers.add("action");
+            headers.add("adventure");
+            headers.add("animation");
+            headers.add("children");
+            headers.add("comedy");
+            headers.add("crime");
+            headers.add("documentary");
+            headers.add("drama");
+            headers.add("fantasy");
+            headers.add("filmnoir");
+            headers.add("horror");
+            headers.add("musical");
+            headers.add("mystery");
+            headers.add("romance");
+            headers.add("scifi");
+            headers.add("thriller");
+            headers.add("war");
+            headers.add("western");
+
+            for (RatingEntity rating : ratingRepository.findAll()) {
+                List<Object> entry = new LinkedList<>();
+                entry.add(rating.getRating());
+
+                UserEntity user = userRepository.findOne(rating.getUserId());
+                MovieEntity movie = movieRepository.findOne(rating.getMovieId());
+
+                entry.add(user.getAge());
+                entry.add(UserEntity.Gender.MALE.equals(user.getGender()) ? "1" : "0");
+                entry.add(user.getJob());
+                entry.add(user.getZip());
+                entry.add(movie.getTitle());
+                entry.add(movie.getUnknown() ? "1" : "0");
+                entry.add(movie.getAction() ? "1" : "0");
+                entry.add(movie.getAdventure() ? "1" : "0");
+                entry.add(movie.getAnimation() ? "1" : "0");
+                entry.add(movie.getChildren() ? "1" : "0");
+                entry.add(movie.getComedy() ? "1" : "0");
+                entry.add(movie.getCrime() ? "1" : "0");
+                entry.add(movie.getDocumentary() ? "1" : "0");
+                entry.add(movie.getDrama() ? "1" : "0");
+                entry.add(movie.getFantasy() ? "1" : "0");
+                entry.add(movie.getFilmnoir() ? "1" : "0");
+                entry.add(movie.getHorror() ? "1" : "0");
+                entry.add(movie.getMusical() ? "1" : "0");
+                entry.add(movie.getMystery() ? "1" : "0");
+                entry.add(movie.getRomance() ? "1" : "0");
+                entry.add(movie.getScifi() ? "1" : "0");
+                entry.add(movie.getThriller() ? "1" : "0");
+                entry.add(movie.getWar() ? "1" : "0");
+                entry.add(movie.getWestern() ? "1" : "0");
+
+                writer.writeNext(StringUtils.toStringArray(entry.stream().map(x -> String.valueOf(x)).collect(Collectors.toList())));
+            }
+
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
 
     public void readAll() {
         readUserIn();
         readDataIn();
         readMovieIn();
 
-        
+
+    }
+
+    public void doAll() throws IOException {
+        readAll();
+        writeData();
     }
 }

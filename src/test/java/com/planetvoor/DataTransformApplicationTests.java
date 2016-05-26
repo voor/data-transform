@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DataTransformApplicationTests {
@@ -30,5 +32,10 @@ public class DataTransformApplicationTests {
     @Test
     public void readDataIn() {
         dataTransformApplication.readDataIn();
+    }
+
+    @Test
+    public void doAll() throws IOException {
+        dataTransformApplication.doAll();
     }
 }

@@ -5,3 +5,5 @@ files:
     path: classpath:ml-100k/u.item
   user:
     path: classpath:ml-100k/u.user
+  output:
+    path: file://${user.dir}/target/movie-data.csv
