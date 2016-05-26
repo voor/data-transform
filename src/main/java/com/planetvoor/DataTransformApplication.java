@@ -174,6 +174,7 @@ public class DataTransformApplication implements CommandLineRunner {
         try (CSVWriter writer = new CSVWriter(new FileWriter(output.getFile()), ',')) {
 
             List<String> headers = new LinkedList<>();
+            headers.add("RECOMMENDED");
             headers.add("RATING");
             headers.add("USER_AGE");
             headers.add("USER_MALE");
@@ -204,10 +205,18 @@ public class DataTransformApplication implements CommandLineRunner {
 
             for (RatingEntity rating : ratingRepository.findAll()) {
                 List<Object> entry = new LinkedList<>();
+
+                Long rate = rating.getRating();
+                if (rate > 3) {
+                    entry.add("1");
+                } else {
+                    entry.add("0");
+                }
                 entry.add(rating.getRating());
 
                 UserEntity user = userRepository.findOne(rating.getUserId());
                 MovieEntity movie = movieRepository.findOne(rating.getMovieId());
+
 
                 entry.add(user.getAge());
                 entry.add(UserEntity.Gender.MALE.equals(user.getGender()) ? "1" : "0");
