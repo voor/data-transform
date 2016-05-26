@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * @author voor
@@ -26,7 +27,7 @@ public class CSVLooper {
 
     public void loop() {
 
-        try (CSVReader reader = new CSVReader(new InputStreamReader(resource.getInputStream()), separator)) {
+        try (CSVReader reader = new CSVReader(new InputStreamReader(resource.getInputStream(), Charset.forName("ISO-8859-1")), separator)) {
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
 

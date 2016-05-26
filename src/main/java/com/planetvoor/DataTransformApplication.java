@@ -98,6 +98,7 @@ public class DataTransformApplication implements CommandLineRunner {
         DateTimeFormatter parser = DateTimeFormat.forPattern("dd-MMM-yyyy");
         CSVLooper.builder().resource(movie).separator('|').line(x -> {
 
+            log.info("Parsing line: {}",Arrays.asList(x));
             Date release = null;
             try {
                 release = parser.parseDateTime(x[2]).toDate();
@@ -117,23 +118,23 @@ public class DataTransformApplication implements CommandLineRunner {
                     .url(url)
                     .unknown("1".equals(x[5]))
                     .action("1".equals(x[6]))
-                    .adventure("1".equals(x[6]))
-                    .animation("1".equals(x[6]))
-                    .children("1".equals(x[6]))
-                    .comedy("1".equals(x[6]))
-                    .crime("1".equals(x[6]))
-                    .documentary("1".equals(x[6]))
-                    .drama("1".equals(x[6]))
-                    .fantasy("1".equals(x[6]))
-                    .filmnoir("1".equals(x[6]))
-                    .horror("1".equals(x[6]))
-                    .musical("1".equals(x[6]))
-                    .mystery("1".equals(x[6]))
-                    .romance("1".equals(x[6]))
-                    .scifi("1".equals(x[6]))
-                    .thriller("1".equals(x[6]))
-                    .war("1".equals(x[6]))
-                    .western("1".equals(x[6])).build();
+                    .adventure("1".equals(x[7]))
+                    .animation("1".equals(x[8]))
+                    .children("1".equals(x[9]))
+                    .comedy("1".equals(x[10]))
+                    .crime("1".equals(x[11]))
+                    .documentary("1".equals(x[12]))
+                    .drama("1".equals(x[13]))
+                    .fantasy("1".equals(x[14]))
+                    .filmnoir("1".equals(x[15]))
+                    .horror("1".equals(x[16]))
+                    .musical("1".equals(x[17]))
+                    .mystery("1".equals(x[18]))
+                    .romance("1".equals(x[19]))
+                    .scifi("1".equals(x[20]))
+                    .thriller("1".equals(x[21]))
+                    .war("1".equals(x[22]))
+                    .western("1".equals(x[23])).build();
 
             log.debug("Adding new movie {}", movie);
 
