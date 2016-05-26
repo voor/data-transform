@@ -177,7 +177,7 @@ public class DataTransformApplication implements CommandLineRunner {
         if (!output.getFile().getParentFile().canWrite()) {
             throw new RuntimeException("Can not write to provided location.");
         }
-        try (CSVWriter writer = new CSVWriter(new FileWriter("movie-data.csv"), ',')) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(output.getFile()), ',')) {
 
             List<String> headers = new LinkedList<>();
             headers.add("RATING");
