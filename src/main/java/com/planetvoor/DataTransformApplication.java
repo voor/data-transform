@@ -155,4 +155,12 @@ public class DataTransformApplication implements CommandLineRunner {
             }
 
     }
+
+    public void readAll() {
+        readUserIn();
+        readDataIn();
+        readMovieIn();
+
+        
+    }
 }
