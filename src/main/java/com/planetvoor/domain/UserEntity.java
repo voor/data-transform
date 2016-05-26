@@ -27,7 +27,7 @@ public class UserEntity implements Serializable {
     Long age;
 
     public enum Gender {
-        MALE, FEMALE;
+        MALE, FEMALE
     }
 
     @Enumerated(EnumType.STRING)

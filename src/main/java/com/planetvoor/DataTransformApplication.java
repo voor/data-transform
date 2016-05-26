@@ -1,6 +1,7 @@
 package com.planetvoor;
 
 import com.planetvoor.domain.MovieEntity;
+import com.planetvoor.domain.RatingEntity;
 import com.planetvoor.domain.UserEntity;
 import com.planetvoor.repository.MovieRepository;
 import com.planetvoor.repository.RatingRepository;
@@ -138,6 +139,15 @@ public class DataTransformApplication implements CommandLineRunner {
             try {
 
                 CSVLooper.builder().file(data.getFile()).separator('\t').line(x -> {
+
+                    RatingEntity ratingEntity = RatingEntity.builder()
+                            .userId(Long.valueOf(x[0]))
+                            .movieId(Long.valueOf(x[1]))
+                            .rating(Long.valueOf(x[2]))
+                            .time(new Date(Long.valueOf(x[3])))
+                            .build();
+
+                    ratingRepository.save(ratingEntity);
 
                 }).build().loop();
             } catch (IOException e) {

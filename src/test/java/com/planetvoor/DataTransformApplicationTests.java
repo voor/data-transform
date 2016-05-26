@@ -26,4 +26,9 @@ public class DataTransformApplicationTests {
     public void readMovieIn() {
         dataTransformApplication.readMovieIn();
     }
+
+    @Test
+    public void readDataIn() {
+        dataTransformApplication.readDataIn();
+    }
 }
