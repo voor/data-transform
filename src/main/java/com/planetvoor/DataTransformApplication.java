@@ -77,94 +77,87 @@ public class DataTransformApplication implements CommandLineRunner {
     }
 
     public void readUserIn() {
-        try {
-            CSVLooper.builder().file(user.getFile()).separator('|').line(x -> {
-                UserEntity user = UserEntity.builder().id(Long.valueOf(x[0]))
-                        .age(Long.valueOf(x[1]))
-                        .gender("M".equals(x[2]) ? UserEntity.Gender.MALE : UserEntity.Gender.FEMALE)
-                        .job(x[3])
-                        .zip(x[4]).build();
 
-                log.debug("Adding new user {}", user);
+        CSVLooper.builder().resource(user).separator('|').line(x -> {
+            UserEntity user = UserEntity.builder().id(Long.valueOf(x[0]))
+                    .age(Long.valueOf(x[1]))
+                    .gender("M".equals(x[2]) ? UserEntity.Gender.MALE : UserEntity.Gender.FEMALE)
+                    .job(x[3])
+                    .zip(x[4]).build();
 
-                userRepository.save(user);
-            }).build().loop();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+            log.debug("Adding new user {}", user);
+
+            userRepository.save(user);
+        }).build().loop();
+
     }
 
     public void readMovieIn() {
-        try {
 
-            DateTimeFormatter parser = DateTimeFormat.forPattern("dd-MMM-yyyy");
-            CSVLooper.builder().file(movie.getFile()).separator('|').line(x -> {
 
-                Date release = null;
-                try {
-                    release = parser.parseDateTime(x[2]).toDate();
-                } catch (IllegalArgumentException e) {
-                    log.error("Unable to parse date {} for {}", x[2], x[1]);
-                }
-                URL url = null;
-                try {
-                    url = URI.create(x[4]).toURL();
-                } catch (Exception e) {
-                    log.error("Unable to parse url {} for {}", x[4], x[1]);
-                }
-                MovieEntity movie = MovieEntity.builder().id(Long.valueOf(x[0]))
-                        .title(x[1])
-                        .release(release)
-                        // x[3] empty
-                        .url(url)
-                        .unknown("1".equals(x[5]))
-                        .action("1".equals(x[6]))
-                        .adventure("1".equals(x[6]))
-                        .animation("1".equals(x[6]))
-                        .children("1".equals(x[6]))
-                        .comedy("1".equals(x[6]))
-                        .crime("1".equals(x[6]))
-                        .documentary("1".equals(x[6]))
-                        .drama("1".equals(x[6]))
-                        .fantasy("1".equals(x[6]))
-                        .filmnoir("1".equals(x[6]))
-                        .horror("1".equals(x[6]))
-                        .musical("1".equals(x[6]))
-                        .mystery("1".equals(x[6]))
-                        .romance("1".equals(x[6]))
-                        .scifi("1".equals(x[6]))
-                        .thriller("1".equals(x[6]))
-                        .war("1".equals(x[6]))
-                        .western("1".equals(x[6])).build();
+        DateTimeFormatter parser = DateTimeFormat.forPattern("dd-MMM-yyyy");
+        CSVLooper.builder().resource(movie).separator('|').line(x -> {
 
-                log.debug("Adding new movie {}", movie);
+            Date release = null;
+            try {
+                release = parser.parseDateTime(x[2]).toDate();
+            } catch (IllegalArgumentException e) {
+                log.error("Unable to parse date {} for {}", x[2], x[1]);
+            }
+            URL url = null;
+            try {
+                url = URI.create(x[4]).toURL();
+            } catch (Exception e) {
+                log.error("Unable to parse url {} for {}", x[4], x[1]);
+            }
+            MovieEntity movie = MovieEntity.builder().id(Long.valueOf(x[0]))
+                    .title(x[1])
+                    .release(release)
+                    // x[3] empty
+                    .url(url)
+                    .unknown("1".equals(x[5]))
+                    .action("1".equals(x[6]))
+                    .adventure("1".equals(x[6]))
+                    .animation("1".equals(x[6]))
+                    .children("1".equals(x[6]))
+                    .comedy("1".equals(x[6]))
+                    .crime("1".equals(x[6]))
+                    .documentary("1".equals(x[6]))
+                    .drama("1".equals(x[6]))
+                    .fantasy("1".equals(x[6]))
+                    .filmnoir("1".equals(x[6]))
+                    .horror("1".equals(x[6]))
+                    .musical("1".equals(x[6]))
+                    .mystery("1".equals(x[6]))
+                    .romance("1".equals(x[6]))
+                    .scifi("1".equals(x[6]))
+                    .thriller("1".equals(x[6]))
+                    .war("1".equals(x[6]))
+                    .western("1".equals(x[6])).build();
 
-                this.movieRepository.save(movie);
-            }).build().loop();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+            log.debug("Adding new movie {}", movie);
+
+            this.movieRepository.save(movie);
+        }).build().loop();
+
     }
 
     public void readDataIn() {
 
-        try {
 
-            CSVLooper.builder().file(data.getFile()).separator('\t').line(x -> {
+        CSVLooper.builder().resource(data).separator('\t').line(x -> {
 
-                RatingEntity ratingEntity = RatingEntity.builder()
-                        .userId(Long.valueOf(x[0]))
-                        .movieId(Long.valueOf(x[1]))
-                        .rating(Long.valueOf(x[2]))
-                        .time(new Date(Long.valueOf(x[3])))
-                        .build();
+            RatingEntity ratingEntity = RatingEntity.builder()
+                    .userId(Long.valueOf(x[0]))
+                    .movieId(Long.valueOf(x[1]))
+                    .rating(Long.valueOf(x[2]))
+                    .time(new Date(Long.valueOf(x[3])))
+                    .build();
 
-                ratingRepository.save(ratingEntity);
+            ratingRepository.save(ratingEntity);
 
-            }).build().loop();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+        }).build().loop();
+
 
     }
 
