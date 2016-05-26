@@ -1,0 +1,7 @@
+files:
+  data:
+    path: classpath:ml-100k/u.data
+  movie:
+    path: classpath:ml-100k/u.item
+  user:
+    path: classpath:ml-100k/u.user
