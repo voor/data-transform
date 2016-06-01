@@ -1,0 +1,9 @@
+files:
+  data:
+    path: classpath:ml-test/u.data
+  movie:
+    path: classpath:ml-test/u.item
+  user:
+    path: classpath:ml-test/u.user
+  output:
+    path: file://${user.dir}/target/movie-data.csv
