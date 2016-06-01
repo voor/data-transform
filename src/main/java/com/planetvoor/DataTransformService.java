@@ -13,6 +13,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -43,7 +44,6 @@ public class DataTransformService {
         this.movieRepository = movieRepository;
         this.ratingRepository = ratingRepository;
     }
-
 
     public void readUserIn(Resource input) {
 
@@ -109,10 +109,23 @@ public class DataTransformService {
 
         CSVLooper.builder().resource(input).separator('\t').line(x -> {
 
-            RatingEntity ratingEntity = RatingEntity.builder().userId(Long.valueOf(x[0])).movieId(Long.valueOf(x[1])).rating(Long.valueOf(x[2]))
+            final Long userId = Long.valueOf(x[0]);
+            final Long movieId = Long.valueOf(x[1]);
+            RatingEntity ratingEntity = RatingEntity.builder().userId(userId).movieId(movieId).rating(Long.valueOf(x[2]))
                     .time(new Date(Long.valueOf(x[3]))).build();
 
-            ratingRepository.save(ratingEntity);
+            try {
+                ratingRepository.save(ratingEntity);
+            }
+            catch (DataIntegrityViolationException e) {
+                log.error("Attempted to add rating that was missing either a user ({}) or a movie ({})", userId, movieId);
+                if (userRepository.findOne(userId) == null) {
+                    log.error("No user id exists for {}", userId);
+                }
+                if (movieRepository.findOne(movieId) == null) {
+                    log.error("No movie ud exists for {}", movieId);
+                }
+            }
 
         }).build().loop();
 
@@ -133,11 +146,9 @@ public class DataTransformService {
             writer.writeNext(StringUtils.toStringArray(Entry.headers()));
 
             for (RatingEntity rating : ratingRepository.findAll()) {
-                UserEntity user = userRepository.findOne(rating.getUserId());
-                MovieEntity movie = movieRepository.findOne(rating.getMovieId());
 
-                if (user != null && movie != null) {
-                    writeEntry(writer, rating, user, movie);
+                if (rating.getUserEntity() != null && rating.getMovieEntity() != null) {
+                    writeEntry(writer, rating);
                 }
             }
 
@@ -149,9 +160,8 @@ public class DataTransformService {
 
     public void readAll(Resource user, Resource data, Resource movie) {
         readUserIn(user);
-        readDataIn(data);
         readMovieIn(movie);
-
+        readDataIn(data);
     }
 
     public void doAll(Resource user, Resource data, Resource movie, Resource output) throws IOException {
@@ -159,8 +169,9 @@ public class DataTransformService {
         writeData(output);
     }
 
-    protected void writeEntry(CSVWriter writer, RatingEntity rating, UserEntity user, MovieEntity movie) {
+    protected void writeEntry(CSVWriter writer, RatingEntity rating) {
 
-        writer.writeNext(StringUtils.toStringArray(Entry.builder().rating(rating).user(user).movie(movie).build().fields()));
+        writer.writeNext(StringUtils
+                .toStringArray(Entry.builder().rating(rating).user(rating.getUserEntity()).movie(rating.getMovieEntity()).build().fields()));
     }
 }

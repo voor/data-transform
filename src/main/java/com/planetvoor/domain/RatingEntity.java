@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import java.util.Date;
 
 /**
@@ -28,6 +30,14 @@ public class RatingEntity {
     Long userId;
 
     Long movieId;
+
+    @OneToOne
+    @JoinColumn(name = "userId", insertable = false, updatable = false)
+    UserEntity userEntity;
+
+    @OneToOne
+    @JoinColumn(name = "movieId", insertable = false, updatable = false)
+    MovieEntity movieEntity;
 
     Long rating;
 
