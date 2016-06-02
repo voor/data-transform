@@ -6,7 +6,7 @@ files:
   user:
     path: classpath:ml-100k/u.user
   output:
-    path: file://${user.dir}/target/movie-data.csv
+    path: file://${user.dir}/target
 
 spring:
   datasource:

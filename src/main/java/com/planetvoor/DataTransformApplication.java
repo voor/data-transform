@@ -1,5 +1,7 @@
 package com.planetvoor;
 
+import com.planetvoor.domain.QRatingEntity;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +45,10 @@ public class DataTransformApplication implements CommandLineRunner {
         }
 
         if (options.contains("output")) {
-            dataTransformService.writeData(output);
+
+            final Predicate predicate = QRatingEntity.ratingEntity.userEntity.age.between(7, 20);
+            final String filename = "youngsters.csv";
+            dataTransformService.writeData(output, filename, predicate);
         }
 
         if (options.contains("input")) {

@@ -3,11 +3,13 @@ package com.planetvoor;
 import com.opencsv.CSVWriter;
 import com.planetvoor.domain.Entry;
 import com.planetvoor.domain.MovieEntity;
+import com.planetvoor.domain.QRatingEntity;
 import com.planetvoor.domain.RatingEntity;
 import com.planetvoor.domain.UserEntity;
 import com.planetvoor.repository.MovieRepository;
 import com.planetvoor.repository.RatingRepository;
 import com.planetvoor.repository.UserRepository;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.stream.StreamSupport;
 
 /**
  * @author voor
@@ -131,21 +134,22 @@ public class DataTransformService {
 
     }
 
-    public void writeData(Resource output) throws IOException {
+    public void writeData(Resource output, String filename, Predicate predicate) throws IOException {
 
-        if (output.getFile().exists()) {
-            final File oldFile = new File(output.getFile().getAbsolutePath() + System.currentTimeMillis());
-            output.getFile().renameTo(oldFile);
+        final File outputFile = new File(output.getFile().getAbsolutePath() + "/" + filename);
+        if (outputFile.exists()) {
+            final File oldFile = new File(outputFile.getAbsolutePath() + System.currentTimeMillis());
+            outputFile.renameTo(oldFile);
         }
-        log.info("Writing out results to {}", output.getFile().getAbsolutePath());
-        if (!output.getFile().getParentFile().canWrite()) {
+        log.info("Writing out results to {}", outputFile.getAbsolutePath());
+        if (!output.getFile().canWrite()) {
             throw new RuntimeException("Can not write to provided location.");
         }
-        try (CSVWriter writer = new CSVWriter(new FileWriter(output.getFile()), ',')) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(outputFile), ',')) {
 
             writer.writeNext(StringUtils.toStringArray(Entry.headers()));
 
-            ratingRepository.findAll().stream().forEach(rating -> {
+            StreamSupport.stream(ratingRepository.findAll(predicate).spliterator(), false).forEach(rating -> {
                 if (rating.getUserEntity() != null && rating.getMovieEntity() != null) {
                     writeEntry(writer, rating);
                 }
@@ -165,7 +169,7 @@ public class DataTransformService {
 
     public void doAll(Resource user, Resource data, Resource movie, Resource output) throws IOException {
         readAll(user, data, movie);
-        writeData(output);
+        writeData(output, "movies.csv", QRatingEntity.ratingEntity.isNotNull());
     }
 
     protected void writeEntry(CSVWriter writer, RatingEntity rating) {
