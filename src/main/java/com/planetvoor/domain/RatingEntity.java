@@ -11,13 +11,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 /**
  * @author voor
  */
 @Data
-@Entity
+@Entity(name = "rating")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,5 +43,6 @@ public class RatingEntity {
 
     Long rating;
 
+    @Temporal(TemporalType.TIMESTAMP)
     Date time;
 }

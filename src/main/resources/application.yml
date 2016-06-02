@@ -7,3 +7,14 @@ files:
     path: classpath:ml-100k/u.user
   output:
     path: file://${user.dir}/target/movie-data.csv
+
+spring:
+  datasource:
+  # CREATE DATABASE movielens;  GRANT ALL PRIVILEGES ON movielens.* TO 'movies'@'localhost' IDENTIFIED BY 'movies';  FLUSH PRIVILEGES;
+    url: jdbc:mysql://localhost/movielens?autoReconnect=true
+    username: movies
+    password: movies
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update

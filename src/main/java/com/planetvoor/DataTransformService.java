@@ -86,7 +86,7 @@ public class DataTransformService {
             catch (Exception e) {
                 log.error("Unable to parse url {} for {}", x[4], x[1]);
             }
-            MovieEntity movie = MovieEntity.builder().id(Long.valueOf(x[0])).title(x[1]).release(release)
+            MovieEntity movie = MovieEntity.builder().id(Long.valueOf(x[0])).title(x[1]).theater(release)
                     // x[3] empty
                     .url(url).unknown("1".equals(x[5])).action("1".equals(x[6])).adventure("1".equals(x[7])).animation("1".equals(x[8]))
                     .children("1".equals(x[9])).comedy("1".equals(x[10])).crime("1".equals(x[11])).documentary("1".equals(x[12]))
@@ -145,12 +145,11 @@ public class DataTransformService {
 
             writer.writeNext(StringUtils.toStringArray(Entry.headers()));
 
-            for (RatingEntity rating : ratingRepository.findAll()) {
-
+            ratingRepository.findAll().stream().forEach(rating -> {
                 if (rating.getUserEntity() != null && rating.getMovieEntity() != null) {
                     writeEntry(writer, rating);
                 }
-            }
+            });
 
         }
         catch (IOException e) {

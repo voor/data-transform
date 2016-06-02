@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 public class DataTransformApplication implements CommandLineRunner {
 
-@Autowired
+    @Autowired
     DataTransformService dataTransformService;
 
     @Value("${files.data.path}")
@@ -40,6 +40,14 @@ public class DataTransformApplication implements CommandLineRunner {
 
         if (options.contains("all")) {
             dataTransformService.doAll(user, data, movie, output);
+        }
+
+        if (options.contains("output")) {
+            dataTransformService.writeData(output);
+        }
+
+        if (options.contains("input")) {
+            dataTransformService.readAll(user, data, movie);
         }
 
         if (options.contains("data")) {

@@ -33,6 +33,29 @@ public class Entry {
         entry.add(rating.getRating());
 
         entry.add(user.getAge());
+        int ageCategory;
+        if (user.getAge() < 21) {
+            ageCategory = 0;
+        } else if (user.getAge() < 24) {
+            ageCategory = 1;
+        } else if (user.getAge() < 27) {
+            ageCategory = 2;
+        } else if (user.getAge() < 30) {
+            ageCategory = 3;
+        } else if (user.getAge() < 33) {
+            ageCategory = 4;
+        } else if (user.getAge() < 39) {
+            ageCategory = 5;
+        } else if (user.getAge() < 44) {
+            ageCategory = 6;
+        } else if (user.getAge() < 50) {
+            ageCategory = 7;
+        } else if (user.getAge() < 64) {
+            ageCategory = 8;
+        } else {
+            ageCategory = 9;
+        }
+        entry.add(ageCategory);
         entry.add(UserEntity.Gender.MALE.equals(user.getGender()) ? "1" : "0");
         entry.add(user.getJob());
         entry.add(user.getZip());
@@ -65,6 +88,7 @@ public class Entry {
         headers.add("RECOMMENDED");
         headers.add("RATING");
         headers.add("USER_AGE");
+        headers.add("USER_AGE_CATEGORY");
         headers.add("USER_MALE");
         headers.add("USER_JOB");
         headers.add("USER_ZIP");

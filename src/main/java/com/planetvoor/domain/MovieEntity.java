@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
@@ -15,7 +17,7 @@ import java.util.Date;
 /**
  * @author voor
  */
-@Entity
+@Entity(name = "movie")
 @Data
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,7 +29,8 @@ public class MovieEntity implements Serializable {
 
     String title;
 
-    Date release;
+    @Temporal(TemporalType.DATE)
+    Date theater;
 
     URL url;
 

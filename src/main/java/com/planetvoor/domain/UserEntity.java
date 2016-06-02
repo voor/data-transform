@@ -15,7 +15,7 @@ import java.io.Serializable;
 /**
  * @author voor
  */
-@Entity
+@Entity(name = "user")
 @Data
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
