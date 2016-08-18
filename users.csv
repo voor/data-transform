@@ -1,4 +1,4 @@
-id,age,gender,job
+id,age,gender,label
 "user_1",24,"MALE","technician"
 "user_2",53,"FEMALE","other"
 "user_3",23,"MALE","writer"
